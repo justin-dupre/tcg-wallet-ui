@@ -75,7 +75,6 @@ export function InputForm() {
                         name="photo"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Upload Card Image</FormLabel>
                                 <FormControl>
                                     <Input
                                         type="file"
@@ -86,9 +85,7 @@ export function InputForm() {
                                         }}
                                     />
                                 </FormControl>
-                                <FormDescription>
-                                    Snap a card pic to reveal its value or claim it for your collection!
-                                </FormDescription>
+
                                 <FormMessage />
                             </FormItem>
                         )}

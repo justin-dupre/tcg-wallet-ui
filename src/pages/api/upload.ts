@@ -3,47 +3,46 @@ import type { APIRoute } from 'astro';
 export const prerender = false
 
 export const POST: APIRoute = async ({ request }) => {
+  const backendUrl = 'http://127.0.0.1:8000/api/image/analyze-image';
+  const body = request.body;
+  console.log(body);
+
+  const headers = new Headers(request.headers);
+  // Remove host header to avoid issues with CORS/proxy
+  headers.delete('host');
+  // Remove content-length to let fetch recalculate it if needed
+  headers.delete('content-length');
+
+  const response = await fetch(backendUrl, {
+    method: 'POST',
+    headers,
+    body,
+    duplex: 'half',
+  } as RequestInit);
+
+  const contentType = response.headers.get('content-type') || '';
+  let result;
+  let resultContentType = 'application/json';
   try {
-    const formData = await request.formData();
-    const file = formData.get('file');
-    console.log(file)
-    if (!file || !(file instanceof File)) {
-      return new Response(JSON.stringify({ error: 'No file uploaded' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
+    if (contentType.includes('application/json')) {
+      result = await response.json();
+    } else if (contentType.startsWith('text/')) {
+      const text = await response.text();
+      result = { message: text };
+    } else {
+      // For binary or unknown types, return as base64
+      const buffer = await response.arrayBuffer();
+      const base64 = Buffer.from(buffer).toString('base64');
+      result = { base64 };
     }
-
-    // Forward the file to the Go backend
-    const proxyFormData = new FormData();
-    proxyFormData.append('file', file);
-
-    const resp = await fetch('https://golangbackend.onrender.com/upload', {
-      method: 'POST',
-      body: proxyFormData,
-      headers: {
-        'Accept': 'application/json', // Expect JSON response
-      }
-    });
-
-    const data = await resp.text();
-    if (!resp.ok) {
-        console.log('Error response from Go backend:', data);
-        
-      return new Response(data, {
-        status: resp.status,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-    return new Response(data, {
-      status: resp.status,
-      headers: { 'Content-Type': resp.headers.get('Content-Type') || 'application/json' },
-    });
-  } catch (err) {
-    console.error('Error in upload API:', err);
-    return new Response(JSON.stringify({ error: 'Proxy error', details: String(err) }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+  } catch (e) {
+    result = { error: 'Failed to parse backend response' };
   }
+
+  return new Response(JSON.stringify(result), {
+    status: response.status,
+    headers: {
+      'content-type': resultContentType,
+    },
+  });
 };

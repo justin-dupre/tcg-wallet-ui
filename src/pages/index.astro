@@ -1,7 +1,31 @@
 ---
-import { InputForm } from "@/components/card-inputs";
-import "../styles/global.css";
+import UploadCardImage from "@/components/upload-image-card.tsx";
+import SiteLayout from "@/layouts/SiteLayout.astro";
 ---
+
+<script is:inline>
+  const getThemePreference = () => {
+    if (typeof localStorage !== "undefined" && localStorage.getItem("theme")) {
+      return localStorage.getItem("theme");
+    }
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+  };
+  const isDark = getThemePreference() === "dark";
+  document.documentElement.classList[isDark ? "add" : "remove"]("dark");
+
+  if (typeof localStorage !== "undefined") {
+    const observer = new MutationObserver(() => {
+      const isDark = document.documentElement.classList.contains("dark");
+      localStorage.setItem("theme", isDark ? "dark" : "light");
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+  }
+</script>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -9,99 +33,15 @@ import "../styles/global.css";
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>Collector Inv</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet" />
-    <style>
-      body {
-        font-family: 'Inter', sans-serif;
-        background: linear-gradient(135deg, #18181b 0%, #23272f 100%);
-        color: #f3f4f6;
-        min-height: 100vh;
-        margin: 0;
-      }
-      .center-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        min-height: 100vh;
-        gap: 2rem;
-      }
-      .glass {
-        background: rgba(36, 39, 48, 0.85);
-        border-radius: 1.5rem;
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        padding: 2.5rem 2rem 2rem 2rem;
-        max-width: 420px;
-        width: 100%;
-        margin: 0 auto;
-        animation: fadeIn 1s cubic-bezier(.39,.575,.565,1) both;
-      }
-      @keyframes fadeIn {
-        0% { opacity: 0; transform: translateY(40px); }
-        100% { opacity: 1; transform: translateY(0); }
-      }
-      .brand {
-        font-size: 2.2rem;
-        font-weight: 700;
-        letter-spacing: -1px;
-        background: linear-gradient(90deg, #fbbf24 30%, #6366f1 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-      .subtitle {
-        color: #a1a1aa;
-        font-size: 1.1rem;
-        margin-bottom: 1.5rem;
-        text-align: center;
-      }
-      .glass input[type="file"] {
-        width: 100%;
-        padding: 1rem 1.2rem;
-        border-radius: 0.6rem;
-        background: rgba(24, 24, 27, 0.7);
-        color: #f3f4f6;
-        border: 1px solid #33354a;
-        font-size: 1.08rem;
-        margin-bottom: 0.9rem;
-        transition: border 0.2s, box-shadow 0.2s;
-        box-shadow: 0 2px 8px 0 rgba(31, 38, 135, 0.07);
-      }
-      .glass input[type="file"]::file-selector-button {
-        background: linear-gradient(90deg, #6366f1 0%, #fbbf24 100%);
-        color: #fff;
-        border: none;
-        border-radius: 0.5rem;
-        padding: 0.7rem 1.3rem;
-        font-weight: 600;
-        font-size: 1.08rem;
-        cursor: pointer;
-        margin-right: 1rem;
-        transition: background 0.2s;
-        -webkit-text-fill-color: #fff;
-        text-shadow: none;
-      }
-      .glass input[type="file"]:focus {
-        outline: none;
-        border: 1.5px solid #6366f1;
-        box-shadow: 0 0 0 2px #6366f1aa;
-      }
-      @media (max-width: 600px) {
-        .glass { padding: 1.2rem 0.5rem; }
-        .brand { font-size: 1.4rem; }
-      }
-    </style>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style></style>
   </head>
   <body>
-    <div class="center-container">
-      <div class="brand" style="margin-bottom: 2.5rem;">Collector Inv</div>
-      <div class="glass">
-        <div class="subtitle">Snap a card, discover its value, and build your collection in style.</div>
-        <InputForm client:load />
-      </div>
-    </div>
+    <SiteLayout>
+      <UploadCardImage client:load />
+    </SiteLayout>
   </body>
 </html>

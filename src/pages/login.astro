@@ -1,0 +1,78 @@
+---
+import SiteLayout from "@/layouts/SiteLayout.astro";
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Login Required</title>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        background: linear-gradient(135deg, #18181b 0%, #23272f 100%);
+        color: #f3f4f6;
+        min-height: 100vh;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+      }
+      .login-center {
+        min-height: calc(100vh - 80px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2rem;
+      }
+      .login-card {
+        background: rgba(36, 39, 48, 0.85);
+        border-radius: 1.5rem;
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        padding: 2.5rem 2rem 2rem 2rem;
+        max-width: 420px;
+        width: 100%;
+        margin: 0 auto;
+        text-align: center;
+      }
+      .login-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+      }
+      .login-desc {
+        color: #a1a1aa;
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+      }
+      .login-btn {
+        background: linear-gradient(90deg, #6366f1 0%, #fbbf24 100%);
+        color: #fff;
+        border: none;
+        border-radius: 0.5rem;
+        padding: 0.7rem 1.3rem;
+        font-weight: 600;
+        font-size: 1.08rem;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .login-btn:hover {
+        background: linear-gradient(90deg, #4f46e5 0%, #f59e42 100%);
+      }
+    </style>
+  </head>
+  <body>
+    <SiteLayout>
+      <div class="login-center">
+        <div class="login-card">
+          <div class="login-title">Login Required</div>
+          <div class="login-desc">You must be signed in to access this page.</div>
+          <a href="/" class="login-btn">Go to Home</a>
+        </div>
+      </div>
+    </SiteLayout>
+  </body>
+</html>
